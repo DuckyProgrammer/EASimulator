@@ -1,8 +1,10 @@
 package me.DuckyProgrammer.EASimulator;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -97,11 +99,15 @@ public class Events implements Listener {
     }
     @EventHandler
     public void onCraft(CraftItemEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        if (!player.hasPermission("easimulator.craft")) {
-            player.sendMessage(ChatColor.RED + "You need to buy access to craft.");
-            player.sendMessage(ChatColor.RED + "You can buy access at " + Main.craft);
-            event.setCancelled(true);
+        for (HumanEntity he : event.getViewers()) {
+            if (!(he instanceof Player player)) {
+                return;
+            }
+            if (!player.hasPermission("easimulator.craft")) {
+                player.sendMessage(ChatColor.RED + "You need to buy access to craft.");
+                player.sendMessage(ChatColor.RED + "You can buy access at " + Main.craft);
+                event.setCancelled(true);
+            }
         }
     }
     @EventHandler
@@ -113,13 +119,16 @@ public class Events implements Listener {
             event.setCancelled(true);
         }
     }
-    @EventHandler
+/*    @EventHandler
     public void onCrouch(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission("easimulator.crouch")) {
             player.sendMessage(ChatColor.RED + "You need to buy access to crouch.");
             player.sendMessage(ChatColor.RED + "You can buy access at " + Main.crouch);
-            event.setCancelled(true);
+            player.setWalkSpeed(0.2f);
+            AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+            assert attribute != null;
+            attribute.setBaseValue(0.1);
         }
     }
     @EventHandler
@@ -128,9 +137,12 @@ public class Events implements Listener {
         if (!player.hasPermission("easimulator.sprint")) {
             player.sendMessage(ChatColor.RED + "You need to buy access to sprint.");
             player.sendMessage(ChatColor.RED + "You can buy access at " + Main.sprint);
-            event.setCancelled(true);
+            player.setWalkSpeed(0.2f);
+            AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+            assert attribute != null;
+            attribute.setBaseValue(0.1);
         }
-    }
+    }*/
     @EventHandler
     public void onRegen(EntityRegainHealthEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
